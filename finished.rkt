@@ -8,9 +8,6 @@
                   ; grid size = square root of dimension
                   (define grid (sqrt size))
                   (define board (array->mutable-array (index-array (make-vector 2 size))))
-                  ; columns as list of arrays
-                  (define cols (sequence->list (in-array-axis board 1)))
-                  (define rows (sequence->list (in-array-axis board)))
                   (define isValid "unknown")
                   (super-new)
                    ;methods
@@ -19,10 +16,7 @@
                   
                   (define/public (get-board)
                     board)
-                  
-                  (define/public (get-cols)
-                    cols)
-                  
+                                      
                   (define/public (get-cell row col)
                     (array-ref board (vector row col)))
                   
@@ -37,6 +31,8 @@
                      valid))
 
                   (define/public (valid-board)
+                    (define cols (sequence->list (in-array-axis board 1)))
+                    (define rows (sequence->list (in-array-axis board)))
                     (if (equal? isValid "unknown") (and (send this valid rows) (send this valid cols)) isValid))))
 
                    
@@ -53,5 +49,5 @@
 (send b set-cell 2 2 -1)
 (send b get-cell 2 2)
 (send b get-board)
-(send b get-cols)
+
 (send b valid-board)
