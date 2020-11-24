@@ -55,4 +55,7 @@
       (0 2 1 0)
       (1 0 0 0)))
 
-(SolveSudoku board)
+;;; (SolveSudoku board)
+(apply SolveSudoku (list board))
+(define fromboard (apply SolveSudoku (list board)))
+(index* fromboard )
