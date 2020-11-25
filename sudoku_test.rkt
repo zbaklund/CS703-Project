@@ -3,7 +3,7 @@
 
 ;brute force sudoku solver
 (define (SolveSudoku sentboard)
-
+  (let ((arb 0))
   (define (subgrid brd r c)                     ; subfn to get subgrid:
     ;(define L '((0 1 2)(3 4 5)(6 7 8)))
     (define L '((0 1)(2 3)))
@@ -20,11 +20,11 @@
                   (cond [(< c 3) (loop nextbd r (add1 c) )]
                         ;[(< r 8)  (loop nextbd (add1 r) 0 )]
                         [(< r 3) (loop nextbd (add1 r) 0 )]
-                        [else (displayln "SOLUTION:")
-                              (for ((rowline nextbd)) 
-                                (println rowline))
+                        ;;; [else (displayln "SOLUTION:")
+                        ;;;       (for ((rowline nextbd)) 
+                        ;;;         (println rowline))]
                               ;(exit) can be added here to stop at first solution.
-                             ]))))
+                             ))))
                         ;;; [else (call-with-output-file )
                         ;;;     ]
       (if (= 0 
@@ -37,25 +37,55 @@
                      (define newbd              ; put number i at this site:
                        (list-set bd r
                                  (list-set (list-ref bd r) c i)))
+                     ;return board
+                     (set! sentboard newbd)
                      (next newbd)))) 
           (next bd)))))
+    sentboard)
 
 (define board                   
-;;;   '((0 0 3 0 2 0 6 0 0)
-;;;     (9 0 0 3 0 5 0 0 1)
-;;;     (0 0 1 8 0 6 4 0 0)
-;;;     (0 0 8 1 0 2 9 0 0)
-;;;     (7 0 0 0 0 0 0 0 8)
-;;;     (0 0 6 7 0 8 2 0 0)
-;;;     (0 0 2 6 0 9 5 0 0)
-;;;     (8 0 0 2 0 3 0 0 9)
-;;;     (0 0 5 0 1 0 3 0 0)))
     '((4 0 0 0)
       (0 1 0 0)
       (0 2 1 0)
       (1 0 0 0)))
 
-;;; (SolveSudoku board)
-(apply SolveSudoku (list board))
-(define fromboard (apply SolveSudoku (list board)))
-(index* fromboard )
+
+(define (replace-at positions orig-list val)
+    (let ((row 0) (col 0))
+    (for ([i (length positions)])
+        (set! row (list-ref (list-ref positions i) 0))
+        (set! col (list-ref (list-ref positions i) 1))
+        ;;; (println (list row col))
+        (set! orig-list (list-set orig-list row (list-set (list-ref orig-list row) col val)))
+    ) orig-list))
+
+;;; (define testboard                   
+;;;     '((4 3 2 1)
+;;;       (2 1 4 3)
+;;;       (3 2 1 4)
+;;;       (1 4 3 2)))
+
+;n = number of random positions to find
+;mx = max value for random in our case for 4x4 == 4
+(define (random-pos n mx)
+    (for/list ((i n))
+        (append (list (random mx)(random mx)))))
+
+
+;Find solved board
+(define solved (SolveSudoku board))
+(println "solved board ")
+(println solved)
+
+;Randomly take out holes
+(define replace (random-pos 3 4))
+(println "random positions for holes ")
+(println replace)
+(define random-holes (replace-at replace solved 0))
+(println "solved board with holes taken out")
+(println random-holes)
+
+;Composition of holes and solved board
+(define holes-and-solved (list random-holes solved))
+(println "holes board and solved board composition")
+(println holes-and-solved)
